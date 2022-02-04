@@ -1,6 +1,6 @@
 from kedro.pipeline import Pipeline, node
 
-from .nodes import evaluate_model, split_data, train_model
+from .nodes import evaluate_model, split_data, train_model,train_rf_model
 
 
 def create_pipeline(**kwargs):
@@ -13,14 +13,14 @@ def create_pipeline(**kwargs):
                 name="split_data_node",
             ),
             node(
-                func=train_model,
+                func=train_rf_model,
                 inputs=["X_train", "y_train"],
-                outputs="regressor",
+                outputs= "rf_regressor",
                 name="train_model_node",
             ),
             node(
                 func=evaluate_model,
-                inputs=["regressor", "X_test", "y_test"],
+                inputs=["rf_regressor", "X_test", "y_test"],
                 outputs=None,
                 name="evaluate_model_node",
             ),

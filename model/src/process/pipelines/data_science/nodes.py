@@ -3,7 +3,8 @@ from typing import Dict, Tuple
 
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score,mean_squared_error
 from sklearn.model_selection import train_test_split
 
 
@@ -38,9 +39,23 @@ def train_model(X_train: pd.DataFrame, y_train: pd.Series) -> LinearRegression:
     regressor.fit(X_train, y_train)
     return regressor
 
+def train_rf_model(X_train: pd.DataFrame, y_train: pd.Series) -> RandomForestRegressor:
+    """Trains the random forest model.
+
+    Args:
+        X_train: Training data of independent features.
+        y_train: Training data for price.
+
+    Returns:
+        Trained model.
+    """
+    rf_regressor = RandomForestRegressor(n_estimators = 50, random_state = 0)
+    rf_regressor.fit(X_train, y_train)
+    return rf_regressor
+
 
 def evaluate_model(
-    regressor: LinearRegression, X_test: pd.DataFrame, y_test: pd.Series
+    rf_regressor: RandomForestRegressor, X_test: pd.DataFrame, y_test: pd.Series
 ):
     """Calculates and logs the coefficient of determination.
 
@@ -49,7 +64,9 @@ def evaluate_model(
         X_test: Testing data of independent features.
         y_test: Testing data for price.
     """
-    y_pred = regressor.predict(X_test)
+    y_pred = rf_regressor.predict(X_test)
     score = r2_score(y_test, y_pred)
+    # mse = mean_squared_error(y_test, y_pred)
     logger = logging.getLogger(__name__)
     logger.info("Model has a coefficient R^2 of %.3f on test data.", score)
+    # logger.info("Model has a accuracy of %.3f on test data.", mse)
